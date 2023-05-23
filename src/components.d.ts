@@ -6,58 +6,71 @@
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 export namespace Components {
-    interface MyComponent {
-        "age": number;
-        /**
-          * The first name
-         */
-        "first": string;
-        /**
-          * The last name
-         */
-        "last": string;
-        /**
-          * The middle name
-         */
-        "middle": string;
+    interface PristifyEditor {
+    }
+    interface PristifyEditorContent {
+    }
+    interface PristifyEditorHeader {
+    }
+    interface PristifyEditorHeaderAction {
     }
 }
 declare global {
-    interface HTMLMyComponentElement extends Components.MyComponent, HTMLStencilElement {
+    interface HTMLPristifyEditorElement extends Components.PristifyEditor, HTMLStencilElement {
     }
-    var HTMLMyComponentElement: {
-        prototype: HTMLMyComponentElement;
-        new (): HTMLMyComponentElement;
+    var HTMLPristifyEditorElement: {
+        prototype: HTMLPristifyEditorElement;
+        new (): HTMLPristifyEditorElement;
+    };
+    interface HTMLPristifyEditorContentElement extends Components.PristifyEditorContent, HTMLStencilElement {
+    }
+    var HTMLPristifyEditorContentElement: {
+        prototype: HTMLPristifyEditorContentElement;
+        new (): HTMLPristifyEditorContentElement;
+    };
+    interface HTMLPristifyEditorHeaderElement extends Components.PristifyEditorHeader, HTMLStencilElement {
+    }
+    var HTMLPristifyEditorHeaderElement: {
+        prototype: HTMLPristifyEditorHeaderElement;
+        new (): HTMLPristifyEditorHeaderElement;
+    };
+    interface HTMLPristifyEditorHeaderActionElement extends Components.PristifyEditorHeaderAction, HTMLStencilElement {
+    }
+    var HTMLPristifyEditorHeaderActionElement: {
+        prototype: HTMLPristifyEditorHeaderActionElement;
+        new (): HTMLPristifyEditorHeaderActionElement;
     };
     interface HTMLElementTagNameMap {
-        "my-component": HTMLMyComponentElement;
+        "pristify-editor": HTMLPristifyEditorElement;
+        "pristify-editor-content": HTMLPristifyEditorContentElement;
+        "pristify-editor-header": HTMLPristifyEditorHeaderElement;
+        "pristify-editor-header-action": HTMLPristifyEditorHeaderActionElement;
     }
 }
 declare namespace LocalJSX {
-    interface MyComponent {
-        "age"?: number;
-        /**
-          * The first name
-         */
-        "first"?: string;
-        /**
-          * The last name
-         */
-        "last"?: string;
-        /**
-          * The middle name
-         */
-        "middle"?: string;
+    interface PristifyEditor {
+    }
+    interface PristifyEditorContent {
+    }
+    interface PristifyEditorHeader {
+    }
+    interface PristifyEditorHeaderAction {
     }
     interface IntrinsicElements {
-        "my-component": MyComponent;
+        "pristify-editor": PristifyEditor;
+        "pristify-editor-content": PristifyEditorContent;
+        "pristify-editor-header": PristifyEditorHeader;
+        "pristify-editor-header-action": PristifyEditorHeaderAction;
     }
 }
 export { LocalJSX as JSX };
 declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
-            "my-component": LocalJSX.MyComponent & JSXBase.HTMLAttributes<HTMLMyComponentElement>;
+            "pristify-editor": LocalJSX.PristifyEditor & JSXBase.HTMLAttributes<HTMLPristifyEditorElement>;
+            "pristify-editor-content": LocalJSX.PristifyEditorContent & JSXBase.HTMLAttributes<HTMLPristifyEditorContentElement>;
+            "pristify-editor-header": LocalJSX.PristifyEditorHeader & JSXBase.HTMLAttributes<HTMLPristifyEditorHeaderElement>;
+            "pristify-editor-header-action": LocalJSX.PristifyEditorHeaderAction & JSXBase.HTMLAttributes<HTMLPristifyEditorHeaderActionElement>;
         }
     }
 }

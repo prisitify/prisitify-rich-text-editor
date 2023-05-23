@@ -1,0 +1,5 @@
+:host .pristify-editor-content{
+  border: 1px solid #000;
+  height: 600px;
+  width: 100%;
+}

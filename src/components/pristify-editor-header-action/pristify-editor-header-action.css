@@ -1,0 +1,29 @@
+:host .pristify-action {
+  display: block;
+  height: 50px;
+  width: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 5px;
+  border-radius: 5px;
+  border: unset;
+
+  
+}
+:host .pristify-action:hover{
+  background-color: #F3F3F3;
+  cursor: pointer;
+}
+
+:host .pristify-action:active{
+  background-color: #F3F3F3;
+  cursor: pointer;
+}
+
+
+svg {
+  height: 20px;
+  width: 20px;   
+}
+
