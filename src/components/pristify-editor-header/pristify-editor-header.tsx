@@ -1,4 +1,4 @@
-import { Component, Host, h } from '@stencil/core';
+import { Component,  h } from '@stencil/core';
 
 @Component({
   tag: 'pristify-editor-header',
@@ -10,9 +10,10 @@ export class PristifyEditorHeader {
   render() {
     return (
       <div class="pristify-header">
-        <pristify-editor-header-action></pristify-editor-header-action>
-        <pristify-editor-header-action></pristify-editor-header-action>
-        <pristify-editor-header-action></pristify-editor-header-action>
+
+        <pristify-action-bold></pristify-action-bold>
+        <pristify-action-italic></pristify-action-italic>
+        <pristify-action-italic></pristify-action-italic>
       </div>
     );
   }

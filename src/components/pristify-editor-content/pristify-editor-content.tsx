@@ -1,4 +1,4 @@
-import { Component, Host, Method, h } from '@stencil/core';
+import { Component, h } from '@stencil/core';
 import userActionService from '../../service/UserActionService';
 
 @Component({
@@ -8,7 +8,7 @@ import userActionService from '../../service/UserActionService';
 })
 export class PristifyEditorContent {
 
-  
+
   render() {
     return (
       <div  class="pristify-editor-content" ref={(el) => userActionService.init(el as HTMLDivElement)} contenteditable={true}>
@@ -24,7 +24,7 @@ export class PristifyEditorContent {
         <li>Mobile</li>
       </ul>
       </div>
-      
+
     );
   }
 

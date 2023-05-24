@@ -6,6 +6,10 @@
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 export namespace Components {
+    interface PristifyActionBold {
+    }
+    interface PristifyActionItalic {
+    }
     interface PristifyEditor {
     }
     interface PristifyEditorContent {
@@ -13,9 +17,26 @@ export namespace Components {
     interface PristifyEditorHeader {
     }
     interface PristifyEditorHeaderAction {
+        "icon": string;
     }
 }
+export interface PristifyEditorHeaderActionCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPristifyEditorHeaderActionElement;
+}
 declare global {
+    interface HTMLPristifyActionBoldElement extends Components.PristifyActionBold, HTMLStencilElement {
+    }
+    var HTMLPristifyActionBoldElement: {
+        prototype: HTMLPristifyActionBoldElement;
+        new (): HTMLPristifyActionBoldElement;
+    };
+    interface HTMLPristifyActionItalicElement extends Components.PristifyActionItalic, HTMLStencilElement {
+    }
+    var HTMLPristifyActionItalicElement: {
+        prototype: HTMLPristifyActionItalicElement;
+        new (): HTMLPristifyActionItalicElement;
+    };
     interface HTMLPristifyEditorElement extends Components.PristifyEditor, HTMLStencilElement {
     }
     var HTMLPristifyEditorElement: {
@@ -41,6 +62,8 @@ declare global {
         new (): HTMLPristifyEditorHeaderActionElement;
     };
     interface HTMLElementTagNameMap {
+        "pristify-action-bold": HTMLPristifyActionBoldElement;
+        "pristify-action-italic": HTMLPristifyActionItalicElement;
         "pristify-editor": HTMLPristifyEditorElement;
         "pristify-editor-content": HTMLPristifyEditorContentElement;
         "pristify-editor-header": HTMLPristifyEditorHeaderElement;
@@ -48,6 +71,10 @@ declare global {
     }
 }
 declare namespace LocalJSX {
+    interface PristifyActionBold {
+    }
+    interface PristifyActionItalic {
+    }
     interface PristifyEditor {
     }
     interface PristifyEditorContent {
@@ -55,8 +82,12 @@ declare namespace LocalJSX {
     interface PristifyEditorHeader {
     }
     interface PristifyEditorHeaderAction {
+        "icon"?: string;
+        "onActionClicked"?: (event: PristifyEditorHeaderActionCustomEvent<string>) => void;
     }
     interface IntrinsicElements {
+        "pristify-action-bold": PristifyActionBold;
+        "pristify-action-italic": PristifyActionItalic;
         "pristify-editor": PristifyEditor;
         "pristify-editor-content": PristifyEditorContent;
         "pristify-editor-header": PristifyEditorHeader;
@@ -67,6 +98,8 @@ export { LocalJSX as JSX };
 declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
+            "pristify-action-bold": LocalJSX.PristifyActionBold & JSXBase.HTMLAttributes<HTMLPristifyActionBoldElement>;
+            "pristify-action-italic": LocalJSX.PristifyActionItalic & JSXBase.HTMLAttributes<HTMLPristifyActionItalicElement>;
             "pristify-editor": LocalJSX.PristifyEditor & JSXBase.HTMLAttributes<HTMLPristifyEditorElement>;
             "pristify-editor-content": LocalJSX.PristifyEditorContent & JSXBase.HTMLAttributes<HTMLPristifyEditorContentElement>;
             "pristify-editor-header": LocalJSX.PristifyEditorHeader & JSXBase.HTMLAttributes<HTMLPristifyEditorHeaderElement>;
