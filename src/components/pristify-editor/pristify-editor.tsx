@@ -11,7 +11,7 @@ export class PristifyEditor {
 
 
     return (
-      <div>
+      <div >
         <pristify-editor-header></pristify-editor-header>
         <pristify-editor-content ></pristify-editor-content>
       </div>

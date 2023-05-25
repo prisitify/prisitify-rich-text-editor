@@ -1,5 +1,12 @@
-:host .pristify-editor-content{
-  border: 1px solid #000;
+.pristify-editor-content{
   height: 600px;
-  width: 100%;
+  padding: 10px;
+  border-radius: 2px;
+  border: 1px solid #d6d6d6;
+  overflow: auto;
+}
+
+
+*:focus {
+  outline: none;
 }

@@ -10,14 +10,17 @@ export class PristifyEditorHeaderAction {
   @Event() actionClicked: EventEmitter<string>;
 
   @Prop() public icon: string;
+  @Prop() public active: boolean = false;
 
   click = () => {
     this.actionClicked.emit();
   }
   render() {
+
+    const classActive  = this.active ? "pristify-action active" : "pristify-action";
     return (
-      <button class="pristify-action" onClick={this.click}>
-        {this.icon}
+      <button class={classActive} onClick={this.click} >
+        <slot></slot>
       </button>
     );
   }

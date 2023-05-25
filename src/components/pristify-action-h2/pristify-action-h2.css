@@ -1,0 +1,7 @@
+:host {
+  display: block;
+}
+:host svg {
+  height: 20px;
+  width: 20px;
+}

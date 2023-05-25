@@ -1,0 +1,10 @@
+:host {
+  display: block;
+}
+
+:host .flex {
+   display: flex;
+   width: fit-content;
+   height: fit-content;
+}
+

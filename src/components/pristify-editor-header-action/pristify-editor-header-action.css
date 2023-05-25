@@ -6,24 +6,22 @@
   align-items: center;
   justify-content: center;
   margin: 5px;
+  padding: 17px;
   border-radius: 5px;
   border: unset;
-
-  
 }
 :host .pristify-action:hover{
   background-color: #F3F3F3;
+  color: white;
   cursor: pointer;
 }
 
-:host .pristify-action:active{
-  background-color: #F3F3F3;
+:host .pristify-action.active {
+  background-color: #237474e6;
+  color: white;
   cursor: pointer;
 }
 
 
-svg {
-  height: 20px;
-  width: 20px;   
-}
+
 

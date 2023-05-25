@@ -13,7 +13,8 @@ export class PristifyEditorHeader {
 
         <pristify-action-bold></pristify-action-bold>
         <pristify-action-italic></pristify-action-italic>
-        <pristify-action-italic></pristify-action-italic>
+        <pristify-action-h1></pristify-action-h1>
+        <pristify-action-h2></pristify-action-h2>
       </div>
     );
   }
