@@ -5,7 +5,9 @@ import { Component,  EventEmitter,  Event,  Prop, h } from '@stencil/core';
   styleUrl: 'pristify-editor-header-action.css',
   shadow: true,
 })
-export class PristifyEditorHeaderAction {
+export class PristifyEditorHeaderAction{
+
+
 
   @Event() actionClicked: EventEmitter<string>;
 
@@ -15,6 +17,7 @@ export class PristifyEditorHeaderAction {
   click = () => {
     this.actionClicked.emit();
   }
+
   render() {
 
     const classActive  = this.active ? "pristify-action active" : "pristify-action";

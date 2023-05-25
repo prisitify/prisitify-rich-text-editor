@@ -1,6 +1,17 @@
+import Action from "./Action";
 
 export class UserActionService  {
-    editor: HTMLDivElement;
+  init2(el: HTMLPristifyActionBoldElement): void {
+    this.boldEl = el;
+  }
+  editor: HTMLDivElement;
+  boldEl: HTMLPristifyActionBoldElement;
+  actions: Map<string, Action> = new Map();
+
+    add(action: Action,) {
+     this.actions.set(action.getKey(), action);
+    }
+
 
     init(myEditor: HTMLDivElement){
        this.editor = myEditor;
@@ -66,6 +77,20 @@ export class UserActionService  {
         // selection.insertNode(span);
         var strongElement = document.createElement("h1");
         el.getRangeAt(0).surroundContents(strongElement)
+    }
+
+    public mouseup() {
+
+      this.actions.forEach(e => {
+        e.inactive();
+      })
+
+      const el:Selection = window.getSelection();
+      var selection = el.getRangeAt(0);
+      const actionName = selection.commonAncestorContainer.parentNode.nodeName;
+      const action: Action = this.actions.get(actionName);
+      console.log(action);
+      action.active();
     }
 
 }
