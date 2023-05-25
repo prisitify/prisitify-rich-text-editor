@@ -59,24 +59,20 @@ export class UserActionService  {
 
     public removeBold () {
 
-        // const h1 = document.createElement("h1") as HTMLHeadingElement;
-        // h1.textContent = "hello world";
-
         const el:Selection = window.getSelection();
-        // // console.log(el.basNode);
 
-        // // el.focusNode.appendChild(h1);
-        var selection = el.getRangeAt(0);
-        console.log(selection);
+        var selection : Range = el.getRangeAt(0);
 
-        // var selectedText = selection.extractContents();
-        // console.log(selectedText);
+        const container : Node = selection.commonAncestorContainer;
+        const parentNode : ParentNode = container.parentNode;
 
-        // var span = document.createElement("strong");
-        // span.appendChild(selectedText);
-        // selection.insertNode(span);
-        var strongElement = document.createElement("h1");
-        el.getRangeAt(0).surroundContents(strongElement)
+        const allChildres = parentNode.childNodes;
+        console.log(container.parentElement,  parentNode.parentElement, container, allChildres)
+        allChildres.forEach(element => {
+          parentNode.parentNode.insertBefore(element, parentNode);
+        });
+
+        // parentNode.removeChild(container);
     }
 
     public mouseup() {
@@ -89,7 +85,6 @@ export class UserActionService  {
       var selection = el.getRangeAt(0);
       const actionName = selection.commonAncestorContainer.parentNode.nodeName;
       const action: Action = this.actions.get(actionName);
-      console.log(action);
       action.active();
     }
 

@@ -18,10 +18,7 @@
 
 :host .pristify-action.active {
   background-color: #237474e6;
-  color: white;
+  color: white ;
+  fill: white;
   cursor: pointer;
 }
-
-
-
-

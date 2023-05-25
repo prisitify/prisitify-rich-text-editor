@@ -25,7 +25,7 @@ export class PristifyEditorContent {
               <h4>Heading 4</h4>
               <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Cumque nihil est hic explicabo similique delectus velit, laboriosam repudiandae impedit? Ducimus, at quod iste accusantium repellat velit magni illo! Nemo, error!</p>
               <p><strong>Lorem ipsum dolor sit amet consectetur adipisicing elit. Cumque nihil est hic explicabo similique delectus velit, laboriosam repudiandae impedit? Ducimus, at quod iste accusantium repellat velit magni illo! Nemo, error!</strong></p>
-
+              <p><span><strong>Hello Strong</strong></span></p>
               <ul>
                 <li>PC</li>
                 <li>Mobile</li>
