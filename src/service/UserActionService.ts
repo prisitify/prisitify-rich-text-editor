@@ -18,11 +18,10 @@ export class UserActionService  {
     }
 
     public bold () {
-
-        const h1 = document.createElement("h1") as HTMLHeadingElement;
-        h1.textContent = "hello world";
-
         const el:Selection = window.getSelection();
+        if(el.anchorOffset == el.focusOffset){
+            return;
+        }
         // console.log(el.basNode);
 
         // el.focusNode.appendChild(h1);
@@ -34,15 +33,20 @@ export class UserActionService  {
         span.appendChild(selectedText);
         selection.insertNode(span);
 
+        console.log(document.activeElement);
+         
+        ;
+        // document.getSelection().empty();
 
     }
 
     public italic () {
 
-      const h1 = document.createElement("h1") as HTMLHeadingElement;
-      h1.textContent = "hello world";
-
       const el:Selection = window.getSelection();
+
+      if(el.anchorOffset == el.focusOffset){
+        return;
+    }
       // console.log(el.basNode);
 
       // el.focusNode.appendChild(h1);
@@ -59,33 +63,59 @@ export class UserActionService  {
 
     public removeBold () {
 
-        const el:Selection = window.getSelection();
+        var evt = new MouseEvent("mouseup", {
+            view: window,
+            bubbles: true,
+            cancelable: true
+            /* whatever properties you want to give it */
+        });
+        
+        const el:Selection = document.getSelection();
+
+        console.log(el);
+        
+        
+        
+        if(el.anchorOffset == el.focusOffset){
+            return;
+        }
 
         var selection : Range = el.getRangeAt(0);
-
+        
         const container : Node = selection.commonAncestorContainer;
-        const parentNode : ParentNode = container.parentNode;
+        const parentNode : HTMLElement = container.parentElement;
 
         const allChildres = parentNode.childNodes;
-        console.log(container.parentElement,  parentNode.parentElement, container, allChildres)
+        console.log(el, container, parentNode);
+        const childs: Node[] =[];
         allChildres.forEach(element => {
-          parentNode.parentNode.insertBefore(element, parentNode);
+            childs.push(element);
         });
 
-        // parentNode.removeChild(container);
+
+        parentNode.replaceWith(...childs);
+       
+
+        // parent.removeChild(parentNode);
     }
 
     public mouseup() {
+        const el:Selection = window.getSelection();
+        if(el.anchorOffset == el.focusOffset){
+            return;
+        }
 
-      this.actions.forEach(e => {
-        e.inactive();
-      })
-
-      const el:Selection = window.getSelection();
-      var selection = el.getRangeAt(0);
-      const actionName = selection.commonAncestorContainer.parentNode.nodeName;
-      const action: Action = this.actions.get(actionName);
-      action.active();
+        this.actions.forEach(e => {
+            e.inactive();
+        })
+        var selection = el.getRangeAt(0);
+        const actionName = selection.commonAncestorContainer.parentNode.nodeName;
+        const action: Action = this.actions.get(actionName);
+        
+        if(action){
+            action.active();
+        }
+      
     }
 
 }

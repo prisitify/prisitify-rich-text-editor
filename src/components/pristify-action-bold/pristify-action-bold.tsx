@@ -33,8 +33,10 @@ export class PristifyActionBold implements Action{
   handleClick() {
     if(this.status == false){
       userActionService.bold();
+      this.active();
     }else {
       userActionService.removeBold();
+      this.inactive();
     }
   }
 
