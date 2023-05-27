@@ -22,7 +22,7 @@ export class PristifyEditorContent {
               <h1>Heading 1</h1>
               <h2>Heading 2</h2>
               <h3>Heading 3</h3>
-              <h4>Heading 4</h4>
+              <strong><h4>Heading 4</h4></strong>
               <p>di sit. Officiis nemo deleniti dicta, pariatur labore voluptas obcaecati explicabo alias?m Lorem ipsum, dolor sit amet consectetur adipisicing elit. A, ipsa. Dolorem rerum distinctio voluptatem mollitia molestias temporibus, inventore, numquam commodi exercitationem quos doloremque in. Iste recusandae at non nam saepe?</p>
               <p><strong>Lorem ipsum dolor sit amet consectetur adipisicing elit. Cumque nihil est hic explicabo similique delectus velit, laboriosam repudiandae impedit? Ducimus, at quod iste accusantium repellat velit magni illo! Nemo, error!</strong></p>
               <p><span><strong>Hello Strong</strong></span></p>
