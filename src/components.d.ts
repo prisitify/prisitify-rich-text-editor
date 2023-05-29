@@ -14,6 +14,10 @@ export namespace Components {
     }
     interface PristifyActionItalic {
     }
+    interface PristifyActionStrikethrough {
+    }
+    interface PristifyActionUnderline {
+    }
     interface PristifyEditor {
     }
     interface PristifyEditorContent {
@@ -54,6 +58,18 @@ declare global {
         prototype: HTMLPristifyActionItalicElement;
         new (): HTMLPristifyActionItalicElement;
     };
+    interface HTMLPristifyActionStrikethroughElement extends Components.PristifyActionStrikethrough, HTMLStencilElement {
+    }
+    var HTMLPristifyActionStrikethroughElement: {
+        prototype: HTMLPristifyActionStrikethroughElement;
+        new (): HTMLPristifyActionStrikethroughElement;
+    };
+    interface HTMLPristifyActionUnderlineElement extends Components.PristifyActionUnderline, HTMLStencilElement {
+    }
+    var HTMLPristifyActionUnderlineElement: {
+        prototype: HTMLPristifyActionUnderlineElement;
+        new (): HTMLPristifyActionUnderlineElement;
+    };
     interface HTMLPristifyEditorElement extends Components.PristifyEditor, HTMLStencilElement {
     }
     var HTMLPristifyEditorElement: {
@@ -83,6 +99,8 @@ declare global {
         "pristify-action-h1": HTMLPristifyActionH1Element;
         "pristify-action-h2": HTMLPristifyActionH2Element;
         "pristify-action-italic": HTMLPristifyActionItalicElement;
+        "pristify-action-strikethrough": HTMLPristifyActionStrikethroughElement;
+        "pristify-action-underline": HTMLPristifyActionUnderlineElement;
         "pristify-editor": HTMLPristifyEditorElement;
         "pristify-editor-content": HTMLPristifyEditorContentElement;
         "pristify-editor-header": HTMLPristifyEditorHeaderElement;
@@ -97,6 +115,10 @@ declare namespace LocalJSX {
     interface PristifyActionH2 {
     }
     interface PristifyActionItalic {
+    }
+    interface PristifyActionStrikethrough {
+    }
+    interface PristifyActionUnderline {
     }
     interface PristifyEditor {
     }
@@ -114,6 +136,8 @@ declare namespace LocalJSX {
         "pristify-action-h1": PristifyActionH1;
         "pristify-action-h2": PristifyActionH2;
         "pristify-action-italic": PristifyActionItalic;
+        "pristify-action-strikethrough": PristifyActionStrikethrough;
+        "pristify-action-underline": PristifyActionUnderline;
         "pristify-editor": PristifyEditor;
         "pristify-editor-content": PristifyEditorContent;
         "pristify-editor-header": PristifyEditorHeader;
@@ -128,6 +152,8 @@ declare module "@stencil/core" {
             "pristify-action-h1": LocalJSX.PristifyActionH1 & JSXBase.HTMLAttributes<HTMLPristifyActionH1Element>;
             "pristify-action-h2": LocalJSX.PristifyActionH2 & JSXBase.HTMLAttributes<HTMLPristifyActionH2Element>;
             "pristify-action-italic": LocalJSX.PristifyActionItalic & JSXBase.HTMLAttributes<HTMLPristifyActionItalicElement>;
+            "pristify-action-strikethrough": LocalJSX.PristifyActionStrikethrough & JSXBase.HTMLAttributes<HTMLPristifyActionStrikethroughElement>;
+            "pristify-action-underline": LocalJSX.PristifyActionUnderline & JSXBase.HTMLAttributes<HTMLPristifyActionUnderlineElement>;
             "pristify-editor": LocalJSX.PristifyEditor & JSXBase.HTMLAttributes<HTMLPristifyEditorElement>;
             "pristify-editor-content": LocalJSX.PristifyEditorContent & JSXBase.HTMLAttributes<HTMLPristifyEditorContentElement>;
             "pristify-editor-header": LocalJSX.PristifyEditorHeader & JSXBase.HTMLAttributes<HTMLPristifyEditorHeaderElement>;

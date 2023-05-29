@@ -30,6 +30,8 @@ export class PristifyEditorContent {
                 <li>PC</li>
                 <li>Mobile</li>
               </ul>
+
+              <i><s><strong><u>TEST</u></strong></s></i>
               <img src="https://picsum.photos/id/3/1000/200" />
             </div>
          </div>
