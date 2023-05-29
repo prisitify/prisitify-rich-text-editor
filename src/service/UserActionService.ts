@@ -1,15 +1,16 @@
 
+import { log } from "console";
 import Action from "./Action";
 
 export class UserActionService {
     removeUnderline() {
-      throw new Error('Method not implemented.');
+        throw new Error('Method not implemented.');
     }
-  
+
     removeStrikethrough() {
-      throw new Error('Method not implemented.');
+        throw new Error('Method not implemented.');
     }
-    
+
     init2(el: HTMLPristifyActionBoldElement): void {
         this.boldEl = el;
     }
@@ -27,16 +28,16 @@ export class UserActionService {
     }
 
     public bold() {
-        const wrapFn = ()=> {return document.createElement("strong");} 
+        const wrapFn = () => { return document.createElement("strong"); }
         this.wrap(wrapFn);
     }
 
-    
+
     public italic() {
         const wrapper = () => { return document.createElement('i') };
         this.wrap(wrapper);
     }
-    
+
     underline() {
         const wrapper = () => { return document.createElement('u') };
         this.wrap(wrapper);
@@ -45,7 +46,7 @@ export class UserActionService {
     strikethrough() {
         const wrapper = () => { return document.createElement('s') };
         this.wrap(wrapper);
-      }
+    }
 
 
 
@@ -133,23 +134,40 @@ export class UserActionService {
         })
 
 
-        var selection = el.getRangeAt(0);
+        var range = el.getRangeAt(0);
 
-        console.log(el, selection);
 
-        const actionName = selection.commonAncestorContainer.parentNode.nodeName;
-        const action: Action = this.actions.get(actionName);
+        const allTextNodes = this.getRangeTextNodes(range);
+        console.log(allTextNodes);
+        allTextNodes.forEach(nodeText => {
+            const parentNames = [];
+            this.getParentOne(nodeText, parentNames)
+            parentNames.forEach(node => {
 
-        if (action) {
-            action.active();
+                this.actions.get(node.nodeName)?.active();
+
+            });
+        });
+
+
+
+
+    }
+
+    public getParentOne(node: Node, parents: Array<Node>) {
+        if (node?.parentElement?.hasChildNodes()) {
+            parents.push(node?.parentNode);
+            if (node.parentElement.getAttribute("class") !== "pristify-editor-content") {
+                return this.getParentOne(node?.parentNode, parents);
+            }
         }
-
+        return null;
     }
 
 
 
     //APIiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii
-    public surroundNode(node,nodeRange, wrapper) {
+    public surroundNode(node, nodeRange, wrapper) {
         let ok = false;
         // if(node.parentNode.childNodes.length == 1) {
         //     if(node.parentNode.nodeName === "STRONG") {
@@ -158,11 +176,11 @@ export class UserActionService {
         //     }
         // }
 
-        if(!ok){
+        if (!ok) {
             nodeRange.surroundContents(wrapper);
         }
-            
-        
+
+
     }
 
     wrap(wrapperTypeFn) {
