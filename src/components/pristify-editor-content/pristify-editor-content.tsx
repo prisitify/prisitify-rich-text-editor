@@ -8,10 +8,6 @@ import userActionService from '../../service/UserActionService';
 })
 export class PristifyEditorContent {
 
-  @Listen("mouseup")
-  onMouseUp() {
-    userActionService.mouseup();
-  }
 
   render() {
     return (

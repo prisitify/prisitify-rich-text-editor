@@ -28,8 +28,11 @@ export class PristifyActionItalic  implements Action {
 
   @Listen('actionClicked', { capture: true })
   handleClick() {
-     userActionService.italic();
-     this.active();
+     if(this.status == false){
+      userActionService.italic();
+    }else {
+      userActionService.removeItalic();
+    }
   }
 
 

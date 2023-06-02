@@ -1,4 +1,5 @@
-import { Component, h } from '@stencil/core';
+import { Component, Listen, h } from '@stencil/core';
+import userActionService from '../../service/UserActionService';
 
 @Component({
   tag: 'pristify-editor',
@@ -6,7 +7,10 @@ import { Component, h } from '@stencil/core';
   shadow: false,
 })
 export class PristifyEditor {
-
+  @Listen("mousemove")
+  onMouseUp() {
+    userActionService.mouseup();
+  }
   render() {
 
 

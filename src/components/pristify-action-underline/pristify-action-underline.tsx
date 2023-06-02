@@ -29,7 +29,7 @@ export class PristifyActionUnderline {
   handleClick() {
     if(this.status == false){
       userActionService.underline();
-    }else { 
+    }else {
       userActionService.removeUnderline();
     }
   }
