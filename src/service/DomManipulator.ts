@@ -1,4 +1,6 @@
+
 import { log } from "console";
+import UserActionService from "./UserActionService";
 
 export class DomManipulator {
 
@@ -45,12 +47,12 @@ export class DomManipulator {
     }
 
     // Remove the selected element
-    // parentParagraph.removeChild(selectedSpan);
+    parentParagraph.removeChild(selectedSpan);
 
     // Insert the new element after the parent tag
     parentParagraph.parentNode.insertBefore(selectedSpan, parentParagraph.nextSibling);
     parentParagraph.parentNode.insertBefore(newElement, selectedSpan.nextSibling);
-    document.normalize();
+    newElement.normalize();
     // document.createRange().selectNodeContents(selectedSpan);
 
 
@@ -89,173 +91,164 @@ export class DomManipulator {
     });
   }
 
-  public remove(range: Range, tag) {
-    console.log(range.commonAncestorContainer);
-    if (["I", "STRONG", "S", "U"].includes(range.commonAncestorContainer.nodeName)) {
-      const container = document.createElement(range.commonAncestorContainer.nodeName);
-      container.appendChild(range.extractContents());
-      range.insertNode(container);
-      this.unwrapChildContainer(container, tag);
-      const parents = [];
+  public removeText(range: Range, tag) {
+    console.log("range : ", range.cloneContents());
+    // console.log("range name: ",range.commonAncestorContainer.parentNode.nodeName);
 
-      this.getParentOne(container, parents);
-
-      console.log(parents);
-      
-      if (this.checkTag(parents, tag) === true) {
-        parents.every((node) => {
-          if (node.nodeName === tag) {
-            this.splitElement(container, node);
-            range.selectNodeContents(container);
-            if (container.nodeName === tag) {
-              document.createRange().selectNodeContents(container)
-              this.unwrap(container);
-            }
-
-            return false;
-          }
-          this.splitElement(container, node);
-
-    
-          document.createRange().selectNodeContents(container)
-          return true;
-        })
-      }
-      
-    }
-
-
-    else {
-    //        nodes.forEach((node) => {
-    //         const nodeRange = this.createRangeFromNode(node);
-    //        if ( node.textContent.length > 0) {
-
-    //             if (node === startNode) {
-    //                 nodeRange.setStart(node, startOffset);
-    //             }
-
-    //             if (node === endNode) {
-    //                 nodeRange.setEnd(node, endOffset);
-    //             }
-
-    //             if (endNode === startNode) {
-    //                 range.selectNode(node);
-    //             }
-
-    //             DomManipulator.remove(nodeRange, type);
-    //         }
-    //     }
-    //     );
-    //    }
-    }
-
-    /*
-   if (range.commonAncestorContainer.nodeType === 1) {
-     const parents = [];
-     // parents.push(range.commonAncestorContainer);
-    console.log(range.commonAncestorContainer);
-    
-     this.getParentOne(range.commonAncestorContainer, parents);
-
-
-     let previousNode;
-     console.log(parents);
-    
-     parents.every((node) => {
-
-       if (node.nodeName === tag ) {
-         // this.unwrapRange4(range, node);
-         // this.removeTag(previousNode, tag);
-         // if(previousNode.parentElement.nodeName === tag) {
-           // this.unwrap(node);
-         // }
-
-        
-         // this.splitElement(span, node);
-         return false;
-       }
-
-       const content = range.extractContents();
-       
-       const nodeName = document.createElement(node.nodeName);
-       nodeName.appendChild(content);
-       globalThis.$(nodeName).wrap("<span></span>");
-    
-       
-       range.insertNode(nodeName)
-       //
-       // this.unwrap(nodeName)
-     
-       // this.splitElement(span, node) 
-
-       return true;
-     });
-   } */
-
-
-    // let content = range.extractContents();
-
-    // console.log(range);
-
-
-
-
-
-
-    //   range.insertNode(newNode);
-    // this.getParentOne(range.commonAncestorContainer, parents)
-
-    // console.log(parents);
-
-
-    // this.removeTag(range, tag)
-
-
-
-    // let newNode = undefined;
-    // parents.every((node) => {
-
-
-
-    //   if(node.nodeName === tag) {
-
-
-    //     this.unwrapRange(range, tag);
-    //     return false;
-    //   }      
-    //   if(node.nodeType === Node.TEXT_NODE) {
-    //     newNode = document.createTextNode("");
-    //     newNode.appendChild(content)
-    //   }else {
-    //     newNode = document.createElement(node.nodeName);
-    //     newNode.appendChild(content);
-    //   }
-
-    //   range.insertNode(newNode);
-    //   this.splitElement(newNode, node);
-
-    //   return true;     
-    // });
-
-    // while (parent) {
-    //   if (parents[0].nodeName === tag || range.commonAncestorContainer.nodeType === Node.TEXT_NODE) {
-    //     const content = range.extractContents();
-    //     const span = document.createElement('span');
-    //     span.appendChild(content);
-    //     range.insertNode(span);
-    //     let parent = span.parentNode;
-
-    //     this.splitElement(span, parent);
-    //     parent = parent.parentNode;
-    //     if (parent.nodeName === tag) {
-    //       return;
-    //     }
-    //   }
+    // if(range.commonAncestorContainer.nodeType === Node.TEXT_NODE) {
+    //   return;
     // }
 
-    // this.unwrap(span);
+    // console.log(range.commonAncestorContainer.nodeName);
+
+    // const container = document.createElement(range.commonAncestorContainer.nodeName);
+    // container.appendChild(range.extractContents());
+    // console.log("container : ", container);
+
+    // range.insertNode(container);
+    // this.unwrapChildContainer(container, tag);
+    // const parents = [];
+
+    // this.getParentOne(container, parents);
+
+    // console.log("parents", parents);
+
+
+    // if (this.checkTag(parents, tag) === true) {
+    //   parents.every((node) => {
+    //     if (node.nodeName === tag) {
+    //       this.splitElement(container, node);
+
+    //       return false;
+    //     }
+    //     this.splitElement(container, node);
+    //     return true;
+    //   })
+    // }
+
+
+
   }
 
+
+  public remove(range: Range, tag) {
+    // console.log(range.commonAncestorContainer);
+    // if (["I", "STRONG", "S", "U"].includes(range.commonAncestorContainer.nodeName)) {
+    //   const container = document.createElement(range.commonAncestorContainer.nodeName);
+    //   container.appendChild(range.extractContents());
+    //   range.insertNode(container);
+    //   this.unwrapChildContainer(container, tag);
+    //   const parents = [];
+
+    //   this.getParentOne(container, parents);
+
+    //   console.log(parents);
+
+    //   if (this.checkTag(parents, tag) === true) {
+    //     parents.every((node) => {
+    //       if (node.nodeName === tag) {
+    //         this.splitElement(container, node);
+    //         range.selectNodeContents(container);
+    //         if (container.nodeName === tag) {
+    //           document.createRange().selectNodeContents(container)
+    //           this.unwrap(container);
+    //         }
+
+    //         return false;
+    //       }
+    //       this.splitElement(container, node);
+
+
+    //       document.createRange().selectNodeContents(container)
+    //       return true;
+    //     })
+    //   }
+
+    // }
+
+
+    // else {
+    console.log("commonAncestorContainer : ", range.commonAncestorContainer.parentElement);
+
+    const nodes = UserActionService.getRangeTextNodes(range);
+    // console.log("childs: ", nodes);
+    let startNode = range.startContainer;
+    let endNode = range.endContainer;
+    let startOffset = range.startOffset;
+    let endOffset = range.endOffset;
+    const old = range.cloneRange();
+
+    let mem  = [];
+    let netStabign;
+    nodes.forEach(node => {
+      const nodeRange : Range = UserActionService.createRangeFromNode(node)
+
+      if (node === startNode) {
+        nodeRange.setStart(node, startOffset);
+  
+      }
+
+      if (node === endNode) {
+        nodeRange.setEnd(node, endOffset);
+      }
+
+     
+      this.move(node, nodeRange, tag)
+
+    })
+  }
+
+  public move(node, nodeRange, tag) {
+    let content = nodeRange.extractContents();
+    let parents = []
+    let wrapper ;
+    UserActionService.getParentOne(node, parents)
+
+    parents.every( (p) => {
+   
+     
+      if(p.nodeName === tag) {
+
+       
+
+        nodeRange.insertNode(wrapper)
+        const nextNode =  p;
+       
+        
+        let sib = wrapper.nextSibling ?  wrapper.nextSibling : wrapper.parentNode.nextSibling
+       
+       
+        p.parentNode.insertBefore(wrapper,  p.nextSibling);
+
+        while(sib) {
+           this.move(sib, nodeRange, tag);
+          // const subwrap = document.createElement(p.nodeName);
+          // const old = sib;
+          // subwrap.appendChild(sib.cloneNode());
+          // p.parentNode.insertBefore(subwrap,  wrapper.nextSibling);
+       
+          
+         
+
+          // wrapper = subwrap;
+          // sib = sib.nextSibling ?  sib.nextSibling : sib.parentNode.nextSibling
+          // // p.parentNode.removeC(old)
+
+          
+          
+        }
+       
+        return false;
+      }
+      wrapper = document.createElement(p.nodeName);
+      wrapper.appendChild(content);
+     
+      content = wrapper; 
+     
+
+      return true;
+    })
+  }
 
   public getParentOne(node: Node, parents: Array<Node>) {
     if (node?.parentElement?.hasChildNodes()) {

@@ -49,6 +49,7 @@ export class UserActionService {
 
     removeItalic() {
         this.unwrapSelection("I");
+        // document.execCommand("removeFormat", true, "i");
     }
 
     removeUnderline() {
@@ -103,6 +104,15 @@ export class UserActionService {
         })
     }
 
+    public getRangeFragments(range) {
+        var container = range.commonAncestorContainer
+            , nodes = this.getTextNodes(container.parentNode || container)
+
+        return nodes.filter((node) => {
+            return this.rangeIntersectsNode(range, node) && this.isNonEmptyTextNode(node)
+        })
+    }
+
     public getTextNodes(el) {
         el = el || document.body
 
@@ -116,6 +126,36 @@ export class UserActionService {
         }
         return textNodes
     }
+
+    public getFragments(range, container) {
+        const ancestor = range.commonAncestorContainer;
+
+    // Get all child elements within the range
+        const childElements = this.getChildElementsInRange(range, ancestor);
+
+        console.log(childElements);
+
+        return childElements;
+    }
+
+    public getChildElementsInRange(range, ancestor) {
+        const childElements = [];
+      
+        const treeWalker = document.createTreeWalker(
+          ancestor,
+          NodeFilter.SHOW_ALL,
+          {
+            acceptNode: node => range.intersectsNode(node) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP
+          }
+        );
+      
+        let node;
+        while ((node = treeWalker.nextNode())) {
+          childElements.push(node);
+        }
+      
+        return childElements;
+      }
 
     public isNonEmptyTextNode(node) {
         return node.textContent.length > 0
