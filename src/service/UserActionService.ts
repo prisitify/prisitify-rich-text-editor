@@ -140,7 +140,7 @@ export class UserActionService {
 
     public getChildElementsInRange(range, ancestor) {
         const childElements = [];
-      
+
         const treeWalker = document.createTreeWalker(
           ancestor,
           NodeFilter.SHOW_ALL,
@@ -148,12 +148,12 @@ export class UserActionService {
             acceptNode: node => range.intersectsNode(node) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP
           }
         );
-      
+
         let node;
         while ((node = treeWalker.nextNode())) {
           childElements.push(node);
         }
-      
+
         return childElements;
       }
 
@@ -172,25 +172,28 @@ export class UserActionService {
             return;
         }
 
-       
+
 
         var range = el.getRangeAt(0);
+
+        console.log(range);
+
         DomManipulator.remove(range, type);
 
         this.editor.focus();
     //    if(range.commonAncestorContainer.nodeName === type) {
     //         DomManipulator.remove(range, type);
     //    }else {
-    //     const nodes = this.getRangeTextNodes(range);        
-        
+    //     const nodes = this.getRangeTextNodes(range);
+
     //     let startNode = range.startContainer;
     //     let endNode = range.endContainer;
     //     let startOffset = range.startOffset;
     //     let endOffset = range.endOffset;
 
 
-       
-        
+
+
 
     //     nodes.forEach((node) => {
     //         const nodeRange = this.createRangeFromNode(node);
@@ -207,13 +210,13 @@ export class UserActionService {
     //             if (endNode === startNode) {
     //                 range.selectNode(node);
     //             }
-                
+
     //             DomManipulator.remove(nodeRange, type);
     //         }
     //     }
     //     );
     //    }
-        
+
 
 /*
         var range = el.getRangeAt(0);
@@ -221,19 +224,19 @@ export class UserActionService {
         console.log(rangeText);
         console.log(range.startOffset);
         console.log(range.endOffset);
-        
-        
+
+
         if (range.commonAncestorContainer.parentNode.nodeName === type) {
             console.log("here");
-            
+
               const span = document.createElement('SPAN');
               range.surroundContents(span);
 
-      
-      
+
+
             const i = document.createElement(type);
-       
-            
+
+
             span.insertAdjacentElement('beforebegin', i)
 
             let navigation = span.previousSibling.previousSibling;

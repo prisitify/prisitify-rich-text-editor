@@ -1,6 +1,7 @@
 
 import { log } from "console";
 import UserActionService from "./UserActionService";
+import NodeToUnwrap from "./NodeToUnwrap";
 
 export class DomManipulator {
 
@@ -28,7 +29,7 @@ export class DomManipulator {
         el.parentNode.insertBefore(el.firstChild, el);
       }
       // remove the empty element
-      el.remove();
+      el.parentNode.removeChild(el);
     }
   }
 
@@ -166,88 +167,144 @@ export class DomManipulator {
 
     // }
 
+    let nodes: Node[] = [];
+    if (range.commonAncestorContainer.nodeType === Node.TEXT_NODE) {
+      nodes = UserActionService.getRangeTextNodes(range);
+    } else {
+      nodes = UserActionService.getTextNodes(range.commonAncestorContainer);
+      console.log(nodes);
 
-    // else {
-    console.log("commonAncestorContainer : ", range.commonAncestorContainer.parentElement);
+    }
 
-    const nodes = UserActionService.getRangeTextNodes(range);
-    // console.log("childs: ", nodes);
+
+    console.log("childs: ", range.commonAncestorContainer, nodes);
     let startNode = range.startContainer;
     let endNode = range.endContainer;
     let startOffset = range.startOffset;
     let endOffset = range.endOffset;
-    const old = range.cloneRange();
 
-    let mem  = [];
-    let netStabign;
+    let isStarted: 0 | 1 | 2 | 3 = 0;
+    const endEndOfNodes: NodeToUnwrap[] = [];
+    const nodesToUnwrap: NodeToUnwrap[] = [];
     nodes.forEach(node => {
-      const nodeRange : Range = UserActionService.createRangeFromNode(node)
+      const nodeRange: Range = UserActionService.createRangeFromNode(node)
+      if (UserActionService.rangeIntersectsNode(range, node)) {
+        if (node === startNode) {
+          isStarted = 1;
+          nodeRange.setStart(node, startOffset);
+        }
 
-      if (node === startNode) {
-        nodeRange.setStart(node, startOffset);
-  
+        if (node === endNode) {
+          nodeRange.setEnd(node, endOffset);
+
+          const endNode: NodeToUnwrap = { node: node, range: null }
+          endEndOfNodes.push(endNode);
+          isStarted = 3;
+        }
+
+
+        // this.move(node, nodeRange, tag)
+        const nodeToUnewrap: NodeToUnwrap = { node: node, range: nodeRange }
+        nodesToUnwrap.push(nodeToUnewrap);
+      } else {
+        if (isStarted > 2) {
+          const endNode: NodeToUnwrap = { node: node, range: null }
+          endEndOfNodes.push(endNode);
+        }
+
       }
 
-      if (node === endNode) {
-        nodeRange.setEnd(node, endOffset);
-      }
 
-     
-      this.move(node, nodeRange, tag)
+    });
 
-    })
+    let beforeElement = undefined;
+    const parent = range.commonAncestorContainer;
+    console.log("node to be unwraped", nodesToUnwrap, parent);
+    beforeElement = parent;
+    nodesToUnwrap.forEach((nodew) => {
+
+      const content = this.extractUnUnwrap(nodew.node, nodew.range, tag);
+
+
+      let inserted;
+
+      // if(content.nodeType === Node.TEXT_NODE) {
+      //   inserted =  beforeElement.insertAdjacentText('afterend', content)
+      // }else {
+      inserted = beforeElement.insertAdjacentElement('afterend', content)
+      // }
+
+      // const inserted = this.insertPile(parent, content, beforeElement);
+
+      nodew.range.deleteContents();
+      // inserted.replaceWith(...inserted.childNodes)
+      beforeElement = inserted;
+    });
+
+
+    console.log(endEndOfNodes);
+
+
+    // endEndOfNodes.forEach((nodew) => {
+    //   // const content = this.extractUnUnwrap(nodew.node, nodew.range, tag);
+    //   const range : Range = UserActionService.createRangeFromNode(nodew.node);
+    //   const content = document.createElement(tag);
+    //   range.surroundContents(content);
+
+    //   if (beforeElement) {
+    //     beforeElement = parent.nextSibling;
+    //   }
+
+    //   console.log("to keep " , parent, content, beforeElement);
+    //   const inserted = this.insertPile(parent, content, beforeElement);
+    //   beforeElement = inserted;
+    // });
+
+
+
+
   }
 
-  public move(node, nodeRange, tag) {
-    let content = nodeRange.extractContents();
+
+
+  public extractUnUnwrap(node: Node, nodeRange: Range, tag, withTag = false) {
+    let content = nodeRange.cloneContents();
+
+    let htmlElement: HTMLElement;
+
     let parents = []
-    let wrapper ;
-    UserActionService.getParentOne(node, parents)
 
-    parents.every( (p) => {
-   
-     
-      if(p.nodeName === tag) {
+    UserActionService.getParentOne(node, parents);
 
-       
-
-        nodeRange.insertNode(wrapper)
-        const nextNode =  p;
-       
-        
-        let sib = wrapper.nextSibling ?  wrapper.nextSibling : wrapper.parentNode.nextSibling
-       
-       
-        p.parentNode.insertBefore(wrapper,  p.nextSibling);
-
-        while(sib) {
-           this.move(sib, nodeRange, tag);
-          // const subwrap = document.createElement(p.nodeName);
-          // const old = sib;
-          // subwrap.appendChild(sib.cloneNode());
-          // p.parentNode.insertBefore(subwrap,  wrapper.nextSibling);
-       
-          
-         
-
-          // wrapper = subwrap;
-          // sib = sib.nextSibling ?  sib.nextSibling : sib.parentNode.nextSibling
-          // // p.parentNode.removeC(old)
-
-          
-          
-        }
-       
-        return false;
+    parents.every((p) => {
+      let wrapper;
+      console.log(p.nodeName);
+      
+      if (!withTag && p.nodeName === tag) {
+        wrapper = document.createElement("span");
+      } else {
+        wrapper = document.createElement(p.nodeName);
       }
-      wrapper = document.createElement(p.nodeName);
-      wrapper.appendChild(content);
-     
-      content = wrapper; 
-     
 
-      return true;
+
+      if (htmlElement) {
+        wrapper.append(htmlElement);
+      }
+      else {
+        wrapper.append(content);
+      }
+
+      htmlElement = wrapper;
+
+      return p.nodeName !== tag;
     })
+
+    return htmlElement;
+  }
+
+
+  public insertPile(parent: Node, content: DocumentFragment | Node, element: Node) {
+    return parent.insertBefore(content, element);
   }
 
   public getParentOne(node: Node, parents: Array<Node>) {
