@@ -2,6 +2,7 @@
 import { log } from "console";
 import UserActionService from "./UserActionService";
 import NodeToUnwrap from "./NodeToUnwrap";
+import { Fragment } from "@stencil/core";
 
 export class DomManipulator {
 
@@ -93,7 +94,6 @@ export class DomManipulator {
   }
 
   public removeText(range: Range, tag) {
-    console.log("range : ", range.cloneContents());
     // console.log("range name: ",range.commonAncestorContainer.parentNode.nodeName);
 
     // if(range.commonAncestorContainer.nodeType === Node.TEXT_NODE) {
@@ -167,17 +167,22 @@ export class DomManipulator {
 
     // }
 
+    let parents : Node[] = [];
+    this.getParentOne(range.commonAncestorContainer,parents) 
+
+    const parent = parents.find((e) => e.nodeName === tag);
+
+    
     let nodes: Node[] = [];
     if (range.commonAncestorContainer.nodeType === Node.TEXT_NODE) {
       nodes = UserActionService.getRangeTextNodes(range);
     } else {
-      nodes = UserActionService.getTextNodes(range.commonAncestorContainer);
-      console.log(nodes);
-
+      nodes = UserActionService.getTextNodes(parent ? parent : range.commonAncestorContainer);
     }
 
+    
+    console.log(nodes);
 
-    console.log("childs: ", range.commonAncestorContainer, nodes);
     let startNode = range.startContainer;
     let endNode = range.endContainer;
     let startOffset = range.startOffset;
@@ -186,6 +191,9 @@ export class DomManipulator {
     let isStarted: 0 | 1 | 2 | 3 = 0;
     const endEndOfNodes: NodeToUnwrap[] = [];
     const nodesToUnwrap: NodeToUnwrap[] = [];
+
+ 
+    
     nodes.forEach(node => {
       const nodeRange: Range = UserActionService.createRangeFromNode(node)
       if (UserActionService.rangeIntersectsNode(range, node)) {
@@ -218,23 +226,23 @@ export class DomManipulator {
     });
 
     let beforeElement = undefined;
-    const parent = range.commonAncestorContainer;
-    console.log("node to be unwraped", nodesToUnwrap, parent);
-    beforeElement = parent;
+ 
+    beforeElement = parent ? parent : range.commonAncestorContainer;
+    
+
+    console.log(parent);
+    
     nodesToUnwrap.forEach((nodew) => {
 
       const content = this.extractUnUnwrap(nodew.node, nodew.range, tag);
 
-
       let inserted;
-
-      // if(content.nodeType === Node.TEXT_NODE) {
-      //   inserted =  beforeElement.insertAdjacentText('afterend', content)
+      // if(content instanceof Fragment) {
+      //   inserted = beforeElement.insertAdjacentText('afterend', content)
       // }else {
-      inserted = beforeElement.insertAdjacentElement('afterend', content)
-      // }
+        inserted = beforeElement.insertAdjacentElement('afterend', content)
 
-      // const inserted = this.insertPile(parent, content, beforeElement);
+      // }
 
       nodew.range.deleteContents();
       // inserted.replaceWith(...inserted.childNodes)
@@ -243,22 +251,21 @@ export class DomManipulator {
 
 
     console.log(endEndOfNodes);
+    
 
+    endEndOfNodes.forEach((nodew) => {
 
-    // endEndOfNodes.forEach((nodew) => {
-    //   // const content = this.extractUnUnwrap(nodew.node, nodew.range, tag);
-    //   const range : Range = UserActionService.createRangeFromNode(nodew.node);
-    //   const content = document.createElement(tag);
-    //   range.surroundContents(content);
+      let range = UserActionService.createRangeFromNode(nodew.node);
 
-    //   if (beforeElement) {
-    //     beforeElement = parent.nextSibling;
-    //   }
+      const content = this.extractUnUnwrap(nodew.node, range, tag, true);
 
-    //   console.log("to keep " , parent, content, beforeElement);
-    //   const inserted = this.insertPile(parent, content, beforeElement);
-    //   beforeElement = inserted;
-    // });
+      
+      let inserted = beforeElement.insertAdjacentElement('afterend', content)
+
+      range.deleteContents();
+
+      beforeElement = inserted;
+    });
 
 
 
@@ -278,10 +285,13 @@ export class DomManipulator {
 
     parents.every((p) => {
       let wrapper;
-      console.log(p.nodeName);
       
       if (!withTag && p.nodeName === tag) {
         wrapper = document.createElement("span");
+        // if(parents[0].nodeName === tag) {
+        //   htmlElement = content;
+        // }
+       
       } else {
         wrapper = document.createElement(p.nodeName);
       }
@@ -356,7 +366,6 @@ export class DomManipulator {
 
 
   public unwrapRange(range, type) {
-    console.log(range);
 
     const span = document.createElement('SPAN');
     range.surroundContents(span);
