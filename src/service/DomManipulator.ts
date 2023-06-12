@@ -1,7 +1,7 @@
 
 import { log } from "console";
 import UserActionService from "./UserActionService";
-import NodeToUnwrap from "./NodeToUnwrap";
+import PristifyNode from "./NodeToUnwrap";
 import { Fragment } from "@stencil/core";
 
 export class DomManipulator {
@@ -168,11 +168,11 @@ export class DomManipulator {
     // }
 
     let parents : Node[] = [];
-    this.getParentOne(range.commonAncestorContainer,parents) 
+    this.findParent(range.commonAncestorContainer, parents)
 
-    const parent = parents.find((e) => e.nodeName === tag);
+    let parent = parents.find((e) => e.nodeName === tag);
 
-    
+
     let nodes: Node[] = [];
     if (range.commonAncestorContainer.nodeType === Node.TEXT_NODE) {
       nodes = UserActionService.getRangeTextNodes(range);
@@ -180,8 +180,10 @@ export class DomManipulator {
       nodes = UserActionService.getTextNodes(parent ? parent : range.commonAncestorContainer);
     }
 
-    
-    console.log(nodes);
+
+
+    console.log("parent range  : ", range.commonAncestorContainer);
+    console.log("nodes : ", nodes);
 
     let startNode = range.startContainer;
     let endNode = range.endContainer;
@@ -189,14 +191,23 @@ export class DomManipulator {
     let endOffset = range.endOffset;
 
     let isStarted: 0 | 1 | 2 | 3 = 0;
-    const endEndOfNodes: NodeToUnwrap[] = [];
-    const nodesToUnwrap: NodeToUnwrap[] = [];
+    const nodesToKeep: PristifyNode[] = [];
+    const nodesToUpdate: PristifyNode[] = [];
 
- 
-    
+    let isTrue;
+
     nodes.forEach(node => {
-      const nodeRange: Range = UserActionService.createRangeFromNode(node)
-      if (UserActionService.rangeIntersectsNode(range, node)) {
+
+      const nodeRange: Range = UserActionService.createRangeFromNode(node);
+
+
+      let myNodes:Node[] = [];
+      UserActionService.getParentOne(node, myNodes);
+
+      console.log("mynodes", myNodes, isTrue);
+
+
+      if (UserActionService.rangeIntersectsNode(range, node) && isTrue) {
         if (node === startNode) {
           isStarted = 1;
           nodeRange.setStart(node, startOffset);
@@ -204,20 +215,19 @@ export class DomManipulator {
 
         if (node === endNode) {
           nodeRange.setEnd(node, endOffset);
-
-          const endNode: NodeToUnwrap = { node: node, range: null }
-          endEndOfNodes.push(endNode);
+          const endNode: PristifyNode = { node: node, range: null }
+          nodesToKeep.push(endNode);
           isStarted = 3;
         }
 
 
         // this.move(node, nodeRange, tag)
-        const nodeToUnewrap: NodeToUnwrap = { node: node, range: nodeRange }
-        nodesToUnwrap.push(nodeToUnewrap);
+        const pristifyNode: PristifyNode = { node: node, range: nodeRange }
+        nodesToUpdate.push(pristifyNode);
       } else {
         if (isStarted > 2) {
-          const endNode: NodeToUnwrap = { node: node, range: null }
-          endEndOfNodes.push(endNode);
+          const endNode: PristifyNode = { node: node, range: null }
+          nodesToKeep.push(endNode);
         }
 
       }
@@ -226,50 +236,43 @@ export class DomManipulator {
     });
 
     let beforeElement = undefined;
- 
-    beforeElement = parent ? parent : range.commonAncestorContainer;
-    
 
-    console.log(parent);
-    
-    nodesToUnwrap.forEach((nodew) => {
+    beforeElement = parent ? parent : isTrue;
 
-      const content = this.extractUnUnwrap(nodew.node, nodew.range, tag);
 
-      let inserted;
-      // if(content instanceof Fragment) {
-      //   inserted = beforeElement.insertAdjacentText('afterend', content)
-      // }else {
-        inserted = beforeElement.insertAdjacentElement('afterend', content)
+    console.log("nodesToUpdate : ", nodesToUpdate);
+    console.log("nodesToKeep : ", nodesToKeep);
 
-      // }
+    nodesToUpdate.forEach((nodeToUpdate) => {
 
-      nodew.range.deleteContents();
-      // inserted.replaceWith(...inserted.childNodes)
+      const content = this.extractUnUnwrap(nodeToUpdate.node, nodeToUpdate.range, tag);
+
+      const parent = this.findParentElementTag(nodeToUpdate.node, tag);
+
+      let inserted = parent.insertAdjacentElement('afterend', content)
+
+      nodeToUpdate.range.deleteContents();
+
       beforeElement = inserted;
+
     });
 
 
-    console.log(endEndOfNodes);
-    
 
-    endEndOfNodes.forEach((nodew) => {
 
-      let range = UserActionService.createRangeFromNode(nodew.node);
 
-      const content = this.extractUnUnwrap(nodew.node, range, tag, true);
+    nodesToKeep.forEach((nodeTokeep) => {
 
-      
-      let inserted = beforeElement.insertAdjacentElement('afterend', content)
+      let range = UserActionService.createRangeFromNode(nodeTokeep.node);
+
+      const content = this.extractUnUnwrap(nodeTokeep.node, range, tag, true);
+
+      let inserted = beforeElement.insertAdjacentElement('afterend', content);
 
       range.deleteContents();
 
       beforeElement = inserted;
     });
-
-
-
-
   }
 
 
@@ -285,13 +288,13 @@ export class DomManipulator {
 
     parents.every((p) => {
       let wrapper;
-      
+
       if (!withTag && p.nodeName === tag) {
         wrapper = document.createElement("span");
         // if(parents[0].nodeName === tag) {
         //   htmlElement = content;
         // }
-       
+
       } else {
         wrapper = document.createElement(p.nodeName);
       }
@@ -317,26 +320,49 @@ export class DomManipulator {
     return parent.insertBefore(content, element);
   }
 
-  public getParentOne(node: Node, parents: Array<Node>) {
+  public findParent(node: Node, parents: Array<Node>) {
     if (node?.parentElement?.hasChildNodes()) {
       parents.push(node?.parentNode);
       if (node.parentElement.getAttribute("class") !== "pristify-editor-content") {
-        return this.getParentOne(node?.parentNode, parents);
+        return this.findParent(node?.parentNode, parents);
       }
     }
     return null;
+  }
+
+
+  public findParentTag(node: Node, tag: string) : Node{
+      const parents : Array<Node> = [];
+      this.findParent(node, parents);
+      return parents.find(e => e.nodeName === tag);
   }
 
   public getParentOne2(node: Node, parents: Array<Node>) {
     if (node?.parentElement) {
       parents.push(node?.parentNode);
       if (node.parentElement.getAttribute("class") !== "pristify-editor-content") {
-        return this.getParentOne(node?.parentNode, parents);
+        return this.findParent(node?.parentNode, parents);
       }
     }
     return null;
   }
 
+
+  public findParentElementTag(node: Node, tag: string) : HTMLElement{
+    const parents : Array<HTMLElement> = [];
+    this.findParentElement(node, parents);
+    return parents.find(e => e.nodeName === tag);
+  }
+
+  public findParentElement(node: Node, parents: Array<HTMLElement>) {
+    if (node?.parentElement?.hasChildNodes()) {
+      parents.push(node?.parentElement);
+      if (node.parentElement.getAttribute("class") !== "pristify-editor-content") {
+        return this.findParent(node?.parentNode, parents);
+      }
+    }
+    return null;
+  }
 
 
   public removeTag(container, tag) {
