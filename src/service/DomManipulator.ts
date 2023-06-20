@@ -133,39 +133,7 @@ export class DomManipulator {
 
 
   public remove(range: Range, tag) {
-    // console.log(range.commonAncestorContainer);
-    // if (["I", "STRONG", "S", "U"].includes(range.commonAncestorContainer.nodeName)) {
-    //   const container = document.createElement(range.commonAncestorContainer.nodeName);
-    //   container.appendChild(range.extractContents());
-    //   range.insertNode(container);
-    //   this.unwrapChildContainer(container, tag);
-    //   const parents = [];
 
-    //   this.getParentOne(container, parents);
-
-    //   console.log(parents);
-
-    //   if (this.checkTag(parents, tag) === true) {
-    //     parents.every((node) => {
-    //       if (node.nodeName === tag) {
-    //         this.splitElement(container, node);
-    //         range.selectNodeContents(container);
-    //         if (container.nodeName === tag) {
-    //           document.createRange().selectNodeContents(container)
-    //           this.unwrap(container);
-    //         }
-
-    //         return false;
-    //       }
-    //       this.splitElement(container, node);
-
-
-    //       document.createRange().selectNodeContents(container)
-    //       return true;
-    //     })
-    //   }
-
-    // }
 
     let parents : Node[] = [];
     this.findParent(range.commonAncestorContainer, parents)
@@ -185,6 +153,8 @@ export class DomManipulator {
     console.log("parent range  : ", range.commonAncestorContainer);
     console.log("nodes : ", nodes);
 
+
+    const baseContainer = range.commonAncestorContainer;
     let startNode = range.startContainer;
     let endNode = range.endContainer;
     let startOffset = range.startOffset;
@@ -194,8 +164,6 @@ export class DomManipulator {
     const nodesToKeep: PristifyNode[] = [];
     const nodesToUpdate: PristifyNode[] = [];
 
-    let isTrue;
-
     nodes.forEach(node => {
 
       const nodeRange: Range = UserActionService.createRangeFromNode(node);
@@ -204,10 +172,10 @@ export class DomManipulator {
       let myNodes:Node[] = [];
       UserActionService.getParentOne(node, myNodes);
 
-      console.log("mynodes", myNodes, isTrue);
 
+      const parent = this.findParentElementTag(node, tag);
 
-      if (UserActionService.rangeIntersectsNode(range, node) && isTrue) {
+      if (UserActionService.rangeIntersectsNode(range, node) && parent) {
         if (node === startNode) {
           isStarted = 1;
           nodeRange.setStart(node, startOffset);
@@ -215,18 +183,18 @@ export class DomManipulator {
 
         if (node === endNode) {
           nodeRange.setEnd(node, endOffset);
-          const endNode: PristifyNode = { node: node, range: null }
+          const endNode: PristifyNode = { node: node, range: null, parent: null}
           nodesToKeep.push(endNode);
           isStarted = 3;
         }
 
 
         // this.move(node, nodeRange, tag)
-        const pristifyNode: PristifyNode = { node: node, range: nodeRange }
+        const pristifyNode: PristifyNode = { node: node, range: nodeRange, parent: parent }
         nodesToUpdate.push(pristifyNode);
       } else {
         if (isStarted > 2) {
-          const endNode: PristifyNode = { node: node, range: null }
+          const endNode: PristifyNode = { node: node, range: null, parent: null }
           nodesToKeep.push(endNode);
         }
 
@@ -237,25 +205,32 @@ export class DomManipulator {
 
     let beforeElement = undefined;
 
-    beforeElement = parent ? parent : isTrue;
-
-
     console.log("nodesToUpdate : ", nodesToUpdate);
     console.log("nodesToKeep : ", nodesToKeep);
 
+    let startRange = undefined;
+
     nodesToUpdate.forEach((nodeToUpdate) => {
+      if(!beforeElement) {
+        beforeElement = nodeToUpdate.parent;
+      }
 
       const content = this.extractUnUnwrap(nodeToUpdate.node, nodeToUpdate.range, tag);
 
-      const parent = this.findParentElementTag(nodeToUpdate.node, tag);
+      let inserted = beforeElement.insertAdjacentElement('afterend', content)
 
-      let inserted = parent.insertAdjacentElement('afterend', content)
 
+      if(!startRange) {
+        startRange = inserted;
+      }
       nodeToUpdate.range.deleteContents();
 
       beforeElement = inserted;
 
     });
+
+
+    const endRange = beforeElement;
 
 
 
@@ -273,7 +248,16 @@ export class DomManipulator {
 
       beforeElement = inserted;
     });
+
+
+
+    range.setStartBefore(startRange);
+    range.setEndAfter(endRange);
+
   }
+
+
+  
 
 
 
